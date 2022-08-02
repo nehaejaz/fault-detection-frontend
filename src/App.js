@@ -19,6 +19,26 @@ const App = () => {
   const [edit, setEdit] = useState(false);
   const csvLink = useRef(); // setup the ref that we'll use for the hidden CsvLink click once we've updated the data
 
+// Pagination Logic
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = rowData.slice(indexOfFirstRow, indexOfLastRow);
+  const totalRows = rowData.length;
+
+  // Formik initial values
+  const initialValues = {
+    tableData: {
+      tableRowValues: currentRows,
+      tableColValues: header,
+      oldValue: currentRows,
+    },
+  };
+
+  useEffect(() => {
+    console.log("rowdata", rowData);
+  }, [rowData]);
+
+  // **** Handlers ****
   const changeHandler = (event) => {
     // Passing file data (event.target.files[0]) to parse using Papa.parse
     Papa.parse(event.target.files[0], {
@@ -47,25 +67,6 @@ const App = () => {
       },
     });
   };
-
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = rowData.slice(indexOfFirstRow, indexOfLastRow);
-  const totalRows = rowData.length;
-
-  const initialValues = {
-    tableData: {
-      tableRowValues: currentRows,
-      tableColValues: header,
-      oldValue: currentRows,
-    },
-  };
-
-  useEffect(() => {
-    console.log("rowdata", rowData);
-  }, [rowData]);
-
-  //Handlers
   const paginate = (number, prev) => {
     setCurrentPage(number);
   };
