@@ -126,7 +126,6 @@ const App = () => {
             console.log("submitted");
             console.log(values);
             updateData(values);
-            // exportCSV(values);
           }}
         >
           {({ values, props }) => (
