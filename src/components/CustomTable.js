@@ -3,7 +3,13 @@ import { Field, Formik } from "formik";
 import { useState } from "react";
 import { ImageTd, Label, Span, SpanLable, Td, Tr } from "../styling/Style";
 
-const CustomTable = ({ tableCols, tableRows, values }) => {
+const CustomTable = ({ tableCols, tableRows, values, fileName }) => {
+ 
+  if (fileName !== "master-dataset.csv") {
+    console.log("hello",fileName)
+    tableCols = tableCols.filter((item) => item !== "component");
+  }
+  console.log("array  =>", tableCols);
   // const [edit, setEdit] = useState(false);
 
   // const editHandler = () => {
@@ -24,10 +30,12 @@ const CustomTable = ({ tableCols, tableRows, values }) => {
         </thead>
         <tbody>
           {tableRows.map((value, index) => {
+            console.log("val=>", value[3]);
             return (
               <Tr
+                key={index}
                 backgroundColor={
-                  values.tableData.tableRowValues[index][2] == 1
+                  values.tableData.tableRowValues[index][2] === "1"
                     ? "#008000ab"
                     : "#ff0808b0"
                 }
@@ -40,53 +48,52 @@ const CustomTable = ({ tableCols, tableRows, values }) => {
                   />
                 </ImageTd>
                 <Td>
-                 
-                    <label style={{width:"100px"}}>
-                      <span>
-                        <Field
-                        style={{ 
+                  <label style={{ width: "100px" }}>
+                    <span>
+                      <Field
+                        style={{
                           width: "20%",
                           height: "20px",
-                          border: "0px"
+                          border: "0px",
                         }}
-                          type="radio"
-                          name={`tableData.tableRowValues.${index}.[2]`}
-                          value="0"
-                        />
-                      </span>
+                        type="radio"
+                        name={`tableData.tableRowValues.${index}.[2]`}
+                        value="0"
+                      />
+                    </span>
 
-                      <span>&nbsp; 0 - Bad</span>
-                    </label>
-                  
-                 
-                    <label style={{width:"190px"}}>
-                      <span>
-                        <Field
-                         style={{ 
+                    <span>&nbsp; 0 - Bad</span>
+                  </label>
+
+                  <label style={{ width: "190px" }}>
+                    <span>
+                      <Field
+                        style={{
                           width: "20%",
                           height: "20px",
-                          border: "0px"
+                          border: "0px",
                         }}
-                          type="radio"
-                          name={`tableData.tableRowValues.${index}.[2]`}
-                          value="1"
-                        />
-                      </span>
+                        type="radio"
+                        name={`tableData.tableRowValues.${index}.[2]`}
+                        value="1"
+                      />
+                    </span>
 
-                      <span>&nbsp;1 - Good</span>
-                    </label>
-                
+                    <span>&nbsp;1 - Good</span>
+                  </label>
                 </Td>
 
-                <Td>
-                  <Field
-                    as="select"
-                    name={`tableData.tableRowValues.${index}.[3]`}
-                  >
-                    <option value="MC27">MC27</option>
-                    <option value="MC9">MC9</option>
-                  </Field>
-                </Td>
+                {fileName === "master-dataset.csv" && (
+                  <Td>
+                    <Field
+                      as="select"
+                      name={`tableData.tableRowValues.${index}.[3]`}
+                    >
+                      <option value="MC27">MC27</option>
+                      <option value="MC9">MC9</option>
+                    </Field>
+                  </Td>
+                )}
               </Tr>
             );
           })}

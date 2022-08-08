@@ -46,10 +46,10 @@ export const CustomPagination = ({
 
   },[totalRows]);
 
-  useEffect(() => {
-      console.log("pageNumbers useEffect",pageNumbers)
-      console.log(pageNumbers.length)
-  },[pageNumbers]);
+  // useEffect(() => {
+  //     console.log("pageNumbers useEffect",pageNumbers)
+  //     console.log(pageNumbers.length)
+  // },[pageNumbers]);
 
 
   return (
@@ -59,7 +59,7 @@ export const CustomPagination = ({
       {/* <Pagination.Ellipsis />   */}
        {pageNumbers.length > 0 &&
          pageNumbers.slice(currentPage-1,currentPage+4).map((item, i) => {
-            console.log(pageArray)
+        
             return (
               <Pagination.Item
                 key={i}
