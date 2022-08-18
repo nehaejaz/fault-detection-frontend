@@ -8,7 +8,7 @@ import { CSVLink } from "react-csv";
 import { ButtonDiv } from "../styling/Style";
 
 const ShowData = ({ header, data, fileName }) => {
-  const [rowData, setRowData] = useState(data);
+  const [rowData, setRowData] = useState(data[0]);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentRows, setCurrentRows] = useState([]);
@@ -16,16 +16,14 @@ const ShowData = ({ header, data, fileName }) => {
   const [totalRows, setTotalRows] = useState();
   const csvLink = useRef(); // setup the ref that we'll use for the hidden CsvLink click once we've updated the data
 
-
   useEffect(() => {
-    console.log("rowData=>", rowData);
     if (rowData.length > 0) {
       calculatePages();
     }
   }, [rowData]);
 
   useEffect(() => {
-      calculatePages();
+    calculatePages();
   }, [currentPage]);
 
   // Pagination Logic
@@ -50,7 +48,7 @@ const ShowData = ({ header, data, fileName }) => {
   // **** Handlers ****
 
   const paginate = (number, prev) => {
-    console.log(number)
+    console.log(number);
     setCurrentPage(number);
   };
   const paginatePrev = () => {
@@ -113,19 +111,19 @@ const ShowData = ({ header, data, fileName }) => {
                   <div>
                     {values.tableData.tableRowValues.length > 0 && (
                       <>
-                        <Button
+                        {/* <Button
                           type="submit"
                           variant="primary"
                           onClick={exportCSV}
                           style={{ float: "right", margin: "1%" }}
                         >
                           Export CSV
-                        </Button>
+                        </Button> */}
 
                         <CSVLink
                           data={rowData}
                           headers={values.tableData.tableColValues}
-                          filename="dataset.csv"
+                          filename={fileName}
                           className="hidden"
                           ref={csvLink}
                           target="_blank"
@@ -150,6 +148,14 @@ const ShowData = ({ header, data, fileName }) => {
                     style={{ margin: "1%" }}
                   >
                     Save Changes
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    onClick={exportCSV}
+                    style={{ float: "right", margin: "1%" }}
+                  >
+                    Export CSV
                   </Button>
                 </ButtonDiv>
               )}

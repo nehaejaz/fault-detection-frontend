@@ -16,6 +16,7 @@ import CustomTab from "./components/CustomTab";
 
 const App = () => {
   const [parsedData, setParsedData] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [header, setHeader] = useState([]);
   const [rowData, setRowData] = useState([]);
   const [csvFile, setCsvFile] = useState([]);
@@ -23,24 +24,35 @@ const App = () => {
   const [lengthOfCsv, setLengthOfCsv] = useState(0);
   const csvLink = useRef(); // setup the ref that we'll use for the hidden CsvLink click once we've updated the data
   const [tabNames, setTabNames] = useState([]);
-
+  const [data, setStructureData] = useState([]);
+  //TODO: Auto generate this array
+  const comps = ["master-dataset.csv", "mc9-all.csv", "mv27-all.csv"];
+  let child = [];
   useEffect(() => {
-    if (csvFile.length == lengthOfCsv) {
-      console.log(csvFile);
+    console.log(dataLoaded);
+    if (csvFile.length == lengthOfCsv && dataLoaded == false) {
+      // console.log("csvfile", csvFile);
       csvFile.forEach((item, i) => {
         pasrseCsvData(i);
+        // let underSampledFiles = csvFile.filter((item) => item.fileName.includes("-us"))
+        // underSampledFiles.forEach(item => {
+        //   let trainingSets = csvFile.filter((item) => item.fileName.includes(item))
+        //   item.name ="neha"
+        // })
+        // console.log("after",array)
       });
+      // setDataLoaded(true)
     }
   }, [csvFile]);
 
   useEffect(() => {
-    console.log("csvData=>", csvData);
+    if (csvData.length == lengthOfCsv) {
+      structureData(csvData);
+    }
   }, [csvData]);
 
   // **** Handlers ****
   const pasrseCsvData = (i) => {
-    console.log("index", csvFile[i].fileName);
-
     // Passing file data (event.target.files[0]) to parse using Papa.parse
     Papa.parse(
       // event.target.files[0],
@@ -70,13 +82,78 @@ const App = () => {
 
           //Set Values
           setRowData(valuesArray);
+          let obj = { fileName: csvFile[i].fileName, rowData: [valuesArray] };
           setCsvData((prev) => [
             ...prev,
             { fileName: csvFile[i].fileName, rowData: [valuesArray] },
           ]);
+          // setCsvData(obj);
+          // return obj
         },
       }
     );
+    //To stop rerendering of the component
+    if (i == csvFile.length - 1) {
+      setDataLoaded(true);
+    }
+  };
+
+  const structureData = (data) => {
+    data.forEach((el) => {
+      if (el.fileName == "master-dataset.csv") {
+        console.log("hello neha")
+        setStructureData((prev) => [
+          ...prev,
+          
+            {
+              component: "master",
+              child: [{
+                all: [el]
+              }],
+            },
+          
+        ]);
+      } else if (el.fileName == "mc9-all.csv") {
+        let comp = "mc9";
+        let mc9 = data.filter((item) => item.fileName.includes("mc9"));
+        let all = mc9.filter((item) => item.fileName.includes("all"));
+        let train = mc9.filter((item) => item.fileName.includes("set"));
+        let sample = mc9.filter((item) => item.fileName.includes("us"))
+
+        setStructureData((prev) => [
+          ...prev,
+          
+            {
+              component: "mc9",
+              child: [{
+                all: all,
+                train: train,
+                samples: [sample],
+              }],
+            },
+          
+        ]);
+      } else if (el.fileName == "mc27-all.csv") {
+        let comp = "mc27";
+        let mc27 = data.filter((item) => item.fileName.includes("mc27"));
+        let all = mc27.filter((item) => item.fileName.includes("all"));
+        let train = mc27.filter((item) => item.fileName.includes("set"));
+        let sample = mc27.filter((item) => item.fileName.includes("us"))
+        setStructureData((prev) => [
+          ...prev,
+          
+            {
+              component: "mc27",
+              child: [{
+                all: all,
+                train: train,
+                samples: [sample],
+              }],
+            },
+          
+        ]);
+      }
+    });
   };
 
   // List CSV Files from Firebase Storage
@@ -121,10 +198,23 @@ const App = () => {
       {/* <Button type="submit" variant="primary" onClick={changeHandler}>
        show
       </Button> */}
-      {csvData && csvFile ? (
-        <CustomTab tabNames={tabNames} header={header} data={csvData} />
+      {data.length > 0? (
+        <>
+          <div
+            className="bg-primary"
+            style={{
+              padding: "1%",
+              color: "white",
+              textAlign: "center",
+              marginBottom: "5%",
+            }}
+          >
+            <h4>Axiom Images Data</h4>
+          </div>
+          <CustomTab tabNames={tabNames} header={header} data={data} />
+        </>
       ) : (
-        "hello"
+        ""
       )}
     </div>
   );
